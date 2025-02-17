@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const LiveFeed = () => {
-  const [isCellPhoneDetected, setIsCellPhoneDetected] = useState(false);
+  const [isGunDetected, setIsGunDetected] = useState(false);
+  const [isKnifeDetected, setIsKnifeDetected] = useState(false);
   const [alarmMessage, setAlarmMessage] = useState('');
   const [boundingBoxes, setBoundingBoxes] = useState([]);
   const [isVideoStarted, setIsVideoStarted] = useState(false);  // Track if video is started
@@ -9,18 +10,27 @@ const LiveFeed = () => {
 
   useEffect(() => {
     if (isVideoStarted) {
-      // Polling every 1 second to check if a cell phone is detected
+      // Polling every 1 second to check if a gun or knife is detected
       const interval = setInterval(() => {
-        fetch('http://127.0.0.1:5000/cell_phone_status')
+        fetch('http://127.0.0.1:5000/detection_status')
           .then(response => response.json())
           .then(data => {
-            setIsCellPhoneDetected(data.cell_phone_detected);
+            setIsGunDetected(data.gun_detected);
+            setIsKnifeDetected(data.knife_detected);
             setBoundingBoxes(data.bounding_boxes);
 
-            // Play the alert sound only when a cell phone is detected
-            if (data.cell_phone_detected) {
-              setAlarmMessage('🚨 Cell phone detected! 🚨');
-              // Check if audio is ready and then play
+            // Play the alarm sound only when a gun or knife is detected
+            if (data.gun_detected) {
+              setAlarmMessage('🚨 Gun detected! 🚨');
+              // Play alarm for gun detection
+              if (audioRef.current) {
+                audioRef.current.play().catch((err) => {
+                  console.error('Error playing sound:', err);
+                });
+              }
+            } else if (data.knife_detected) {
+              setAlarmMessage('🚨 Knife detected! 🚨');
+              // Play alarm for knife detection
               if (audioRef.current) {
                 audioRef.current.play().catch((err) => {
                   console.error('Error playing sound:', err);
@@ -30,7 +40,7 @@ const LiveFeed = () => {
               setAlarmMessage('');
             }
           })
-          .catch(err => console.error('Error fetching cell phone status', err));
+          .catch(err => console.error('Error fetching detection status', err));
       }, 1000);  // Poll every second
 
       return () => clearInterval(interval);
@@ -64,7 +74,7 @@ const LiveFeed = () => {
         />
       )}
 
-      {/* Show alarm message if a cell phone is detected */}
+      {/* Show alarm message if a gun or knife is detected */}
       {alarmMessage && (
         <div className="mt-4 text-red-600 font-bold text-xl">
           {alarmMessage}
@@ -82,7 +92,7 @@ const LiveFeed = () => {
               left: `${box[0]}px`,
               width: `${box[2] - box[0]}px`,
               height: `${box[3] - box[1]}px`,
-              border: box[4] === 'cell phone' ? '2px solid red' : '2px solid green',
+              border: box[4] === 'gun' || box[4] === 'knife' ? '2px solid red' : '2px solid green',
             }}
           ></div>
         ))}
@@ -90,7 +100,7 @@ const LiveFeed = () => {
 
       {/* Audio element for sound */}
       <audio ref={audioRef} preload="auto">
-        {/* Use the local .WAV file from the public folder */}
+        {/* Use your alarm sound file */}
         <source src="/mixkit-classic-alarm-995.wav" type="audio/wav" />
         Your browser does not support the audio element.
       </audio>
