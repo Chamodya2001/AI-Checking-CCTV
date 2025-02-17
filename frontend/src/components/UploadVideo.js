@@ -74,6 +74,14 @@ const UploadVideo = () => {
                 {Math.round(detection.time)} seconds (Frame: {detection.frame})
                 <br />
                 Bounding Box: {JSON.stringify(detection.bounding_box)}
+                <br />
+                {/* Display the image for each detection */}
+                <img
+                  src={`http://localhost:5000${detection.image_url}`}
+                  alt={`Detection at frame ${detection.frame}`}
+                  className="mt-4"
+                  style={{ maxWidth: '300px' }}
+                />
               </li>
             ))}
           </ul>
