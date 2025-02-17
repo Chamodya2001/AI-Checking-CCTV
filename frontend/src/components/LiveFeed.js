@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';  // Import Link for navigation
 
 const LiveFeed = () => {
   const [isGunDetected, setIsGunDetected] = useState(false);
@@ -55,6 +56,13 @@ const LiveFeed = () => {
     <div className="flex flex-col items-center">
       <h2 className="text-2xl mb-4">Live Video Feed</h2>
 
+      {/* Navigation back to home */}
+      <Link to="/">
+        <button className="px-6 py-3 bg-gray-500 text-white rounded-lg mb-4">
+          Back to Home
+        </button>
+      </Link>
+
       {/* Start button for user interaction */}
       {!isVideoStarted && (
         <button
@@ -100,7 +108,6 @@ const LiveFeed = () => {
 
       {/* Audio element for sound */}
       <audio ref={audioRef} preload="auto">
-        {/* Use your alarm sound file */}
         <source src="/mixkit-classic-alarm-995.wav" type="audio/wav" />
         Your browser does not support the audio element.
       </audio>

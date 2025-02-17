@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';  // Import Link for navigation
 
 const UploadVideo = () => {
   const [videoFile, setVideoFile] = useState(null);
@@ -47,12 +48,20 @@ const UploadVideo = () => {
     <div className="upload-video p-6">
       <h2 className="text-3xl font-bold text-green-600">Upload CCTV Video for Detection</h2>
       
-      <form onSubmit={handleUpload} className="flex flex-col items-center">
+      {/* Navigation back to home */}
+      <Link to="/">
+        <button className="mt-4 px-4 py-2 bg-gray-500 text-white rounded">
+          Back to Home
+        </button>
+      </Link>
+
+      {/* Video upload form */}
+      <form onSubmit={handleUpload} className="flex flex-col items-center mt-4">
         <input
           type="file"
           accept="video/*"
           onChange={handleFileChange}
-          className="border p-2 mt-4"
+          className="border p-2"
         />
         <button
           type="submit"
@@ -64,6 +73,7 @@ const UploadVideo = () => {
 
       {loading && <p className="mt-4">Processing video...</p>}
 
+      {/* Detection results */}
       {detectionResults.length > 0 && (
         <div className="mt-6">
           <h3 className="font-bold text-xl">Detection Results:</h3>
@@ -75,7 +85,6 @@ const UploadVideo = () => {
                 <br />
                 Bounding Box: {JSON.stringify(detection.bounding_box)}
                 <br />
-                {/* Display the image for each detection */}
                 <img
                   src={`http://localhost:5000${detection.image_url}`}
                   alt={`Detection at frame ${detection.frame}`}

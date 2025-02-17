@@ -1,17 +1,19 @@
-import React from "react";
-import LiveFeed from "./components/LiveFeed";
-import UploadVideo from "./components/UploadVideo";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './HomePage';
+import UploadVideo from './components/UploadVideo';
+import LiveFeed from './components/LiveFeed';
 
-function App() {
+const App = () => {
   return (
-    <div className="text-center">
-      <h1 className="text-4xl font-bold p-5 text-blue-700">CCTV Object Detection</h1>
-      <div className="flex justify-center space-x-10">
-        <LiveFeed />
-        <UploadVideo />
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/upload" element={<UploadVideo />} />
+        <Route path="/livefeed" element={<LiveFeed />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
